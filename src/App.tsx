@@ -13,7 +13,8 @@ import {
   Maximize2,
   Minimize2,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  Download
 } from "lucide-react";
 import { 
   getAlpinTime, 
@@ -24,6 +25,7 @@ import {
   getIslamicPrayerTimes,
   PrayerTimeInfo
 } from "./utils/solarCalculations";
+import { usePWAInstall } from "./hooks/usePWAInstall";
 
 export default function App() {
   // State for location
@@ -46,6 +48,10 @@ export default function App() {
   const [philosophyText, setPhilosophyText] = useState<string>("");
   const [philosophyLoading, setPhilosophyLoading] = useState<boolean>(false);
   const [philosophyError, setPhilosophyError] = useState<string | null>(null);
+
+  // PWA installation states
+  const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
+  const [showIOSGuide, setShowIOSGuide] = useState<boolean>(false);
 
   // Local storage for user's location setting
   useEffect(() => {
@@ -323,6 +329,28 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* PWA Install Button for Chrome/Android/Desktop */}
+          {isInstallable && !isInstalled && (
+            <button 
+              onClick={install}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-900 bg-emerald-400 hover:bg-emerald-300 rounded-md transition-all shadow-md whitespace-nowrap"
+            >
+              <Download size={13} />
+              <span>Yükle (Web App)</span>
+            </button>
+          )}
+
+          {/* PWA Install Button for iOS */}
+          {isIOS && !isInstalled && (
+            <button 
+              onClick={() => setShowIOSGuide(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-900 bg-emerald-400 hover:bg-emerald-300 rounded-md transition-all shadow-md whitespace-nowrap"
+            >
+              <Download size={13} />
+              <span>iOS'a Yükle</span>
+            </button>
+          )}
+
           <button 
             onClick={() => setIsAboutOpen(!isAboutOpen)}
             className="p-2 rounded-lg hover:bg-white/5 transition-colors text-slate-400 hover:text-white"
@@ -998,6 +1026,31 @@ export default function App() {
           <span>Tarih {selectedDate.toLocaleDateString("tr-TR")}</span>
         </div>
       </footer>
+
+      {/* iOS Safari Installation Guide Modal */}
+      {showIOSGuide && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-slate-900 border border-white/10 p-6 shadow-2xl text-center space-y-4">
+            <div className="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto text-xl">
+              📱
+            </div>
+            <h3 className="text-lg font-bold text-white font-['Cinzel',serif]">iPhone / iPad'e Yükleyin</h3>
+            <p className="text-sm text-slate-300 leading-relaxed text-left">
+              Alpin Güneş Saati'ni ana ekranınıza ekleyip tam ekran bir uygulama (Web App) olarak kullanmak için:
+              <br /><br />
+              1. Safari tarayıcısının altındaki <strong className="text-amber-400">Paylaş (Share)</strong> düğmesine tıklayın.
+              <br />
+              2. Aşağı kaydırın ve <strong className="text-amber-400">Ana Ekrana Ekle (Add to Home Screen)</strong> seçeneğini seçin.
+            </p>
+            <button
+              onClick={() => setShowIOSGuide(false)}
+              className="mt-2 w-full rounded-xl bg-amber-400 hover:bg-amber-300 py-2.5 text-sm font-semibold text-slate-950 transition"
+            >
+              Anladım, Kapat
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
