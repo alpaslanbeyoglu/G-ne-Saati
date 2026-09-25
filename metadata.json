@@ -1,0 +1,6 @@
+{
+  "name": "Alpin Güneş Saati - Tarihsel Zaman Deneyimi",
+  "description": "Gündüz ve geceyi tam on ikişer eşit dilime bölen, güneşin doğuş ve batış vakitlerine göre dinamik olarak hesaplanan geleneksel ve astronomik Alpin Güneş Saati.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
